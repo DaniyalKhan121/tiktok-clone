@@ -150,3 +150,4 @@ export type Database = {
 
 export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 export type Video = Database["public"]["Tables"]["videos"]["Row"];
+export type Comment = Database["public"]["Tables"]["comments"]["Row"];

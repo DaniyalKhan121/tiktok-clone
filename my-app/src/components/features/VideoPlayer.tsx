@@ -1,22 +1,32 @@
 "use client";
 
-import { Volume2, VolumeX } from "lucide-react";
+import { Heart, Volume2, VolumeX } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
+import { useLikeMutation } from "@/hooks/use-like-mutation";
+import { cn } from "@/lib/utils";
+
 export function VideoPlayer({
+  videoId,
   src,
   poster,
   muted,
   onToggleMute,
+  isLiked,
+  likesCount,
 }: {
+  videoId: string;
   src: string;
   poster?: string | null;
   muted: boolean;
   onToggleMute: () => void;
+  isLiked: boolean;
+  likesCount: number;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPaused, setIsPaused] = useState(false);
+  const likeMutation = useLikeMutation();
 
   useEffect(() => {
     const container = containerRef.current;
@@ -54,6 +64,7 @@ export function VideoPlayer({
 
   return (
     <div ref={containerRef} className="relative size-full bg-black">
+      {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
       <video
         ref={videoRef}
         src={src}
@@ -79,6 +90,23 @@ export function VideoPlayer({
       >
         {muted ? <VolumeX className="size-5" /> : <Volume2 className="size-5" />}
       </button>
+
+      <div className="absolute bottom-20 right-3 flex flex-col items-center gap-1">
+        <button
+          type="button"
+          onClick={() => likeMutation.mutate(videoId)}
+          aria-label={isLiked ? "Unlike" : "Like"}
+          className="flex flex-col items-center gap-1 rounded-full p-2"
+        >
+          <Heart
+            className={cn(
+              "size-8 transition-transform",
+              isLiked ? "scale-110 fill-[#FE2C55] text-[#FE2C55]" : "text-white"
+            )}
+          />
+          <span className="text-xs font-semibold text-white">{likesCount}</span>
+        </button>
+      </div>
     </div>
   );
 }

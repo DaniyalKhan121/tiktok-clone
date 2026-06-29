@@ -1,4 +1,5 @@
 import { Play } from "lucide-react";
+import Link from "next/link";
 
 import type { Video } from "@/types/database.types";
 
@@ -12,8 +13,9 @@ export function VideoGrid({ videos }: { videos: Video[] }) {
   return (
     <div className="grid grid-cols-3 gap-1 sm:gap-2">
       {videos.map((video) => (
-        <div
+        <Link
           key={video.id}
+          href={`/feed#${video.id}`}
           className="relative aspect-[9/16] overflow-hidden rounded-md bg-[#1E1E1E]"
         >
           {video.thumbnail_url ? (
@@ -28,7 +30,7 @@ export function VideoGrid({ videos }: { videos: Video[] }) {
               <Play className="size-6 text-[#A8A8A8]" />
             </div>
           )}
-        </div>
+        </Link>
       ))}
     </div>
   );

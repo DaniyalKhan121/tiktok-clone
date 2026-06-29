@@ -2,8 +2,15 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 
 import type { FeedPage } from "@/types/feed";
 
+// Sentinel page-param: once the server runs out of new videos, loop back to
+// the beginning instead of stopping, so the feed never visibly ends.
+const RESTART_CURSOR = "__restart__";
+
 async function fetchFeedPage(cursor: string | null): Promise<FeedPage> {
-  const url = cursor ? `/api/feed?cursor=${encodeURIComponent(cursor)}` : "/api/feed";
+  const effectiveCursor = cursor === RESTART_CURSOR ? null : cursor;
+  const url = effectiveCursor
+    ? `/api/feed?cursor=${encodeURIComponent(effectiveCursor)}`
+    : "/api/feed";
   const response = await fetch(url);
 
   if (!response.ok) {
@@ -18,6 +25,7 @@ export function useInfiniteFeed() {
     queryKey: ["feed"],
     queryFn: ({ pageParam }) => fetchFeedPage(pageParam),
     initialPageParam: null as string | null,
-    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    getNextPageParam: (lastPage) =>
+      lastPage.videos.length > 0 ? lastPage.nextCursor ?? RESTART_CURSOR : null,
   });
 }
