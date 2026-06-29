@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { EditProfileDialog } from "@/components/features/profile/edit-profile-dialog";
+import { ProfileStatsBar } from "@/components/features/profile/profile-stats-bar";
 import { VideoGrid } from "@/components/features/profile/video-grid";
-import { getCurrentUser, getProfile, getProfileVideos } from "@/lib/queries/profile";
+import { getCurrentUser, getFollowStatus, getProfile, getProfileVideos } from "@/lib/queries/profile";
 
 type ProfilePageProps = {
   params: Promise<{ userId: string }>;
@@ -38,6 +39,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   if (!profile) notFound();
 
   const isOwnProfile = currentUser?.id === profile.id;
+  const isFollowing = isOwnProfile ? false : await getFollowStatus(currentUser?.id, profile.id);
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8">
@@ -66,20 +68,14 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
 
         {profile.bio && <p className="max-w-md text-sm text-white">{profile.bio}</p>}
 
-        <div className="flex gap-6 text-sm text-white">
-          <span>
-            <strong>{videos.length}</strong>{" "}
-            <span className="text-[#A8A8A8]">Videos</span>
-          </span>
-          <span>
-            <strong>{profile.followers_count}</strong>{" "}
-            <span className="text-[#A8A8A8]">Followers</span>
-          </span>
-          <span>
-            <strong>{profile.following_count}</strong>{" "}
-            <span className="text-[#A8A8A8]">Following</span>
-          </span>
-        </div>
+        <ProfileStatsBar
+          profileId={profile.id}
+          videosCount={videos.length}
+          followingCount={profile.following_count}
+          initialFollowersCount={profile.followers_count}
+          initialIsFollowing={isFollowing}
+          isOwnProfile={isOwnProfile}
+        />
 
         {isOwnProfile && <EditProfileDialog profile={profile} />}
       </div>

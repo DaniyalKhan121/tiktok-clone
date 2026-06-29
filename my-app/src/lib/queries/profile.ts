@@ -30,3 +30,17 @@ export const getCurrentUser = cache(async () => {
   const { data } = await supabase.auth.getUser();
   return data.user;
 });
+
+export async function getFollowStatus(followerId: string | undefined, followingId: string) {
+  if (!followerId) return false;
+
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("follows")
+    .select("id")
+    .eq("follower_id", followerId)
+    .eq("following_id", followingId)
+    .maybeSingle();
+
+  return Boolean(data);
+}
