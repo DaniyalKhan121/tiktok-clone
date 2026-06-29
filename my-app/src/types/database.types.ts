@@ -37,6 +37,7 @@ export type Database = {
           user_id: string;
           video_url: string;
           thumbnail_url: string | null;
+          title: string | null;
           description: string | null;
           hashtags: string[];
           duration_seconds: number | null;
@@ -51,6 +52,7 @@ export type Database = {
           user_id: string;
           video_url: string;
           thumbnail_url?: string | null;
+          title?: string | null;
           description?: string | null;
           hashtags?: string[];
           duration_seconds?: number | null;
@@ -58,6 +60,7 @@ export type Database = {
         };
         Update: {
           thumbnail_url?: string | null;
+          title?: string | null;
           description?: string | null;
           status?: "processing" | "published" | "failed";
         };

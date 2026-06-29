@@ -12,7 +12,13 @@ export default async function MainLayout({ children }: { children: React.ReactNo
         <Link href="/" className="text-lg font-bold text-[#FE2C55]">
           TikTok Clone
         </Link>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
+          <Link href="/feed" className="text-sm font-medium text-white hover:underline">
+            Feed
+          </Link>
+          <Link href="/upload" className="text-sm font-medium text-white hover:underline">
+            Upload
+          </Link>
           {user && (
             <Link
               href={`/profile/${user.id}`}
